@@ -97,7 +97,7 @@ function fillCalendar(parDay, parMonth, parYear, doFindEvent, eventDay){
 		if(eventDay==day){
 			if(doFindEvent){
 				//выделяем день календаря с нужным нам событием
-				selectTableCell(trElem.childNodes[weekDay]);
+				setTimeout(selectTableCell, 200, trElem.childNodes[weekDay]);
 			}
 		}
 		//инкременты
@@ -112,23 +112,25 @@ function fillCalendar(parDay, parMonth, parYear, doFindEvent, eventDay){
 		}
 	}
 	//наполним календарь событиями
-	fillEvents(curDate, firstDayWeekDay);
+	fillEvents(curDate, firstDayWeekDay, prevMonthLastDay);
 }
 
-function fillEvents(date, weekDay){
+function fillEvents(date, weekDay, prevMonthLastDay){
 	if (!supportsLocalStorage()) { return false; }
 	if(typeof(localStorage) !== 'undefined'){
 		if(localStorage["events"]){
 			var curYear = date.getFullYear();	//год текущей даты календаря
 			var curMonth = date.getMonth();		//месяц текущей даты календаря
+			var curMonthFirstDayWeekDay = getWeekDay(new Date(curYear, curMonth));
+			var firstVisibleDayOfPrevMonth = prevMonthLastDay-curMonthFirstDayWeekDay;
 			var events = JSON.parse(localStorage["events"]);
 			for (var i = 0; i < events.length; i++) {
 				var event = events[i];	//событие
 				var eventDate = new Date(event[0]);			//дата события
+				var eventDay = eventDate.getDate();
 				var eventMonth = eventDate.getMonth();		//месяц даты собтия
 				var eventYear = eventDate.getFullYear();	//год даты события
 				if(curMonth == eventMonth && curYear == eventYear){
-					var eventDay = eventDate.getDate();
 					//Вычислим точные координаты ячейки в таблице(номер дня недели и номер недели в месяце)
 					var eventWeekDay = getWeekDay(eventDate);
 					var eventWeekIndex = Math.floor((eventDay+(7-eventWeekDay))/7)+1;
@@ -137,6 +139,16 @@ function fillEvents(date, weekDay){
 					var eventTD = weekTR.childNodes[eventWeekDay];
 					eventTD.className = "with_event";
 					eventTD.innerHTML = eventTD.innerHTML+"</br><div class='event'><div class='event_title'>"+event[2]+"</div>"+((event[5]!="")?("<div class='event_names'>"+event[5]+"</div>"):"")+"<div style='visibility:hidden'>"+event[6]+"</div></div>";
+				}else if((curMonth-1 == eventMonth && curYear == eventYear) || (eventMonth == 1 && curYear-1 == eventYear)){
+					if(eventDay>=firstVisibleDayOfPrevMonth){
+						//Вычислим точные координаты ячейки в таблице(номер дня недели и номер недели в месяце)
+						var eventWeekDay = getWeekDay(eventDate);
+						var eventWeekIndex = 1;
+						var weekTR = document.getElementById(eventWeekIndex+"w");
+						var eventTD = weekTR.childNodes[eventWeekDay];
+						eventTD.className = "with_event";
+						eventTD.innerHTML = eventTD.innerHTML+"</br><div class='event'><div class='event_title'>"+event[2]+"</div>"+((event[5]!="")?("<div class='event_names'>"+event[5]+"</div>"):"")+"<div style='visibility:hidden'>"+event[6]+"</div></div>";
+					}
 				}
 			}
 		}
@@ -403,7 +415,9 @@ function selectTableCell(target, doShift){
 		event_box.style.left = tableOffsetLeft+tdOffsetLeft+tdOffsetWidth+14+"px";
 		event_box.style.top = tableOffsetTop+tdOffsetTop-18+"px";
 		event_box.style.display = "block";
-		fillEventBox(event_box, target.lastChild.lastChild);
+		if(!doShift){
+			fillEventBox(event_box, target.lastChild.lastChild);
+		}
 	}
 }
 
@@ -563,7 +577,7 @@ function doCreateEventBox(target, doShift){
 		var buttonOffsetHeight = target.offsetHeight;
 		event_box.style.left = formOffsetLeft+"px";
 		event_box.style.top = formOffsetTop+buttonOffsetHeight+14+"px";
-		closeAllBlocks();
+		closeAllBlocks(doShift);
 		event_box.style.display = "block";
 	}
 }
@@ -778,13 +792,15 @@ function getDateObject(value){
 }
 
 //закрываем все открытые блоки
-function closeAllBlocks(){
+function closeAllBlocks(doShift){
 	unselectTD();
 	hideBlock("error_text");
 	hideBlock("event_box");
 	hideBlock("create_box");
 	hideBlock("search_box");
-	document.getElementById("input_add").value = "";
+	if(!doShift){
+		document.getElementById("input_add").value = "";
+	}
 }
 
 //функция снимает отметку #today_cell со всех ячеек
