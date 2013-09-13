@@ -1,0 +1,24 @@
+.scrollbar_line {
+    position: relative;
+    left: 174px;
+    width: 8px;
+    height:365px;
+}
+#scroller {
+    position: relative;
+    width: 8px;
+    height: 8px;
+	background: #7a7a7a;
+    border-radius: 15px;
+}
+.search_scrollbar {
+    padding: 6px 20px 8px 20px;
+    opacity: 0;
+    -webkit-transition: opacity 0.2s ease-out;
+    -moz-transition: opacity 0.2s ease-out;
+    -o-transition: opacity 0.2s ease-out;
+    transition: opacity 0.2s ease-out;
+}
+#search_box:hover .search_scrollbar {
+    opacity: 1;	
+}

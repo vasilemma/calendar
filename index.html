@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Календарь</title>
+  <link href='http://fonts.googleapis.com/css?family=Istok+Web&subset=cyrillic,latin,cyrillic-ext,latin-ext' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu&subset=cyrillic' rel='stylesheet' type='text/css'>
+   <link rel="stylesheet" type="text/css" href="./styles/common.css"> 
+   <link rel="stylesheet" type="text/css" href="./styles/scrollstyle.css">
+   <script src="./scripts/script.js"></script>
+   <script src="./scripts/scrollbar.js"></script>
+</head>
+<body onresize="reSize();" onload="fillCalendar(null, null, null); preventSelection(document);">
+	<header>
+		<div class="header-bg">
+			<form class="knop" onkeypress="if(event.keyCode == 13) return false;">
+				<div id="top_menu">
+					<button class="blue" id="add_event" onkeypress="return checkKey(event)">Добавить</button>
+					<button class="blue" id="refresh">Обновить</button>
+					<div id="search_img"></div>
+					<input id="search" type="search" name="q" placeholder="Событие, дата или участник" onKeyUp="(new translateFunc()).strNormalize(this) ;getListOfEvents();" onkeypress="return checkKey(event)" autocomplete="off" autofocus/>
+				</div>
+				<div class="search_block" id="search_box">
+					<div class="search_block_ug"></div>
+					<div id="search_box_field">
+						<!--Тут будет результат поиска -->
+					</div>
+					<!-- Полоса прокрутки с ползунком -->
+					<div class="search_scrollbar">
+						<div class="scrollbar_line" id="scrollbar">        
+							<div id="scroller" style="top:0px;"></div>
+							<!-- Бегунок мы будем перемещать по полосе задавая css-параметр left -->
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</header>
+	<div id="cent">
+		<div id="menu">
+			<button id="arrow_left" type="submit" onclick="changeCalendar('-');">
+				<div id="triangle-left"></div>
+			</button>
+			<div class="month"><span id="dateTitle"></span></div>
+			<button id="arrow_right" type="submit" onclick="changeCalendar('+');">
+				<div id="triangle-right"></div>
+			</button>
+			<button id="today">Сегодня</button>
+		</div>
+		<table>
+			<tr id="1w">
+				<td class="first">
+				</td><td class="second">
+				</td><td class="third">
+				</td><td class="fourth">
+				</td><td class="fifth">
+				</td><td class="sixth">
+				</td><td class="seventh"></td>
+			</tr>
+			<tr id="2w">
+				<td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td>
+			</tr>
+			<tr id="3w">
+				<td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td>
+			</tr>
+			<tr id="4w">
+				<td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td>
+			</tr>
+			<tr id="5w">
+				<td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td><td>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="create" id="create_box">
+		<div class="create_ug"></div>
+		<form class="add">
+			<div id="x"></div>
+			<input id="input_add" type="text" name="add" placeholder="5 марта, 14:00, День рождения"/>
+			<button type="submit" id="add_create">Создать</button>
+			<span id="error_text">Событие не установлено!</span>
+		</form>
+	</div>
+	<div id="event_box">
+		<div class="event_ug"></div>	
+		<form class="event_add">
+			<div id="x"></div>
+			<input id="input_event_add" type="text" name="event_add" placeholder="Событие"/>
+			<div id="block_event_add"></div>
+			<input id="input_day_add" type="text" name="day_add" placeholder="День, месяц, год"/>
+			<div id="block_day_add"></div>
+			<input id="input_name_add" type="text" name="name_add" placeholder="Имена участников"/>
+			<div id="block_name_add_people">Участники:</div>
+			<div id="block_name_add"></div>
+			<textarea id="input_description_add" cols="34" wrap="7" name="name_add" placeholder="Описание"></textarea>
+			<div id="block_description_add"></div>
+			<button type="submit" id="add_event_done">Готово</button>
+			<button type="reset" id="add_event_clear">Удалить</button>
+		</form>
+	</div>
+</body>
+</html>
